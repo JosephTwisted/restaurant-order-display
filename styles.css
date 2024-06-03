@@ -9,6 +9,17 @@ body {
     color: #fff;
 }
 
+#logo-container {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+}
+
+#logo {
+    height: 100px;
+}
+
 #video-container {
     flex: 9;
     display: flex;
@@ -67,12 +78,13 @@ ul li {
     box-shadow: 0 0 10px rgba(0,0,0,0.5);
     cursor: pointer;
     transition: background 0.3s;
-    min-width: 150px;
+    min-width: 200px;
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    font-family: 'Lufga', sans-serif;
 }
 
 ul li:hover {
@@ -88,13 +100,13 @@ ul li:hover {
 }
 
 .order-number {
-    font-size: 1.5em;
-    font-weight: bold;
+    font-size: 2em;
+    font-family: 'Posey', sans-serif;
     margin-bottom: 10px;
 }
 
 .order-time, .order-status {
-    font-size: 1.2em;
+    font-size: 1.5em;
     margin-bottom: 5px;
 }
 
@@ -115,23 +127,6 @@ button:hover {
     background-color: #e59400;
 }
 
-.admin-link {
-    display: block;
-    margin: 20px auto;
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1em;
-    transition: background 0.3s;
-}
-
-.admin-link:hover {
-    background-color: #45a049;
-}
-
 #order-ready-overlay {
     display: none;
     position: fixed;
@@ -144,15 +139,21 @@ button:hover {
     text-align: center;
     font-size: 3em;
     z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #order-ready-content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    font-family: 'Posey', sans-serif;
+    animation: fadeIn 1s ease-in-out;
 }
 
 .blur {
     filter: blur(5px);
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
 }
