@@ -1,5 +1,15 @@
+@font-face {
+    font-family: 'Posey';
+    src: url('posey.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Lufga';
+    src: url('lufga.ttf') format('truetype');
+}
+
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Lufga', sans-serif;
     margin: 0;
     padding: 0;
     display: flex;
@@ -7,17 +17,6 @@ body {
     height: 100vh;
     background-color: #1a1a1a;
     color: #fff;
-}
-
-#logo-container {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    z-index: 10;
-}
-
-#logo {
-    height: 100px;
 }
 
 #video-container {
@@ -44,10 +43,19 @@ body {
     background: rgba(26, 26, 26, 0.8);
     padding: 20px;
     z-index: 1;
+    flex-direction: column;
+    position: relative;
 }
 
 #orders {
     text-align: center;
+}
+
+.logo {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 150px;
 }
 
 #orders h2 {
@@ -55,6 +63,8 @@ body {
     border-bottom: 2px solid #f2a20c;
     padding-bottom: 10px;
     margin-bottom: 20px;
+    font-family: 'Posey', sans-serif;
+    font-size: 2em;
 }
 
 #order-cards {
@@ -78,13 +88,13 @@ ul li {
     box-shadow: 0 0 10px rgba(0,0,0,0.5);
     cursor: pointer;
     transition: background 0.3s;
-    min-width: 200px;
+    min-width: 150px;
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-family: 'Lufga', sans-serif;
+    font-size: 1.5em;
 }
 
 ul li:hover {
@@ -101,7 +111,7 @@ ul li:hover {
 
 .order-number {
     font-size: 2em;
-    font-family: 'Posey', sans-serif;
+    font-weight: bold;
     margin-bottom: 10px;
 }
 
@@ -119,41 +129,4 @@ button {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 1em;
-    transition: background 0.3s;
-}
-
-button:hover {
-    background-color: #e59400;
-}
-
-#order-ready-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    text-align: center;
-    font-size: 3em;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-#order-ready-content {
-    font-family: 'Posey', sans-serif;
-    animation: fadeIn 1s ease-in-out;
-}
-
-.blur {
-    filter: blur(5px);
-}
-
-@keyframes fadeIn {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
-}
+    font-size: 
