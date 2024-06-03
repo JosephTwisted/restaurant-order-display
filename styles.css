@@ -115,6 +115,23 @@ button:hover {
     background-color: #e59400;
 }
 
+.admin-link {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background 0.3s;
+}
+
+.admin-link:hover {
+    background-color: #45a049;
+}
+
 #order-ready-overlay {
     display: none;
     position: fixed;
