@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', () => {
     const inProgressList = document.getElementById('in-progress-list');
     const completedList = document.getElementById('completed-list');
@@ -17,7 +16,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         ordersInProgress.forEach(order => {
             const li = document.createElement('li');
-            li.textContent = `Order #${String(order.number).padStart(3, '0')} - ${order.timeLeft} min`;
+            li.innerHTML = `
+                <div class="order-number">#${String(order.number).padStart(3, '0')}</div>
+                <div class="order-time">${order.timeLeft} min</div>
+                <div class="order-status">Being Prepared</div>
+            `;
             li.className = order.timeLeft === 0 ? 'pending' : '';
             li.addEventListener('click', () => completeOrder(order.number));
             inProgressList.appendChild(li);
@@ -25,7 +28,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         completedOrders.forEach(order => {
             const li = document.createElement('li');
-            li.textContent = `Order #${String(order.number).padStart(3, '0')} - Ready`;
+            li.innerHTML = `
+                <div class="order-number">#${String(order.number).padStart(3, '0')}</div>
+                <div class="order-time">Ready</div>
+                <div class="order-status">For Pickup</div>
+            `;
             li.className = 'finished';
             li.addEventListener('click', () => removeOrder(order.number));
             completedList.appendChild(li);
