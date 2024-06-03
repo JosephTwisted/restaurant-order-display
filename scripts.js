@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
         audio.play();
         videoContainer.classList.add('blur');
         orderReadyContent.textContent = `Order #${String(orderNumber).padStart(3, '0')} is Ready!`;
-        orderReadyOverlay.style.display = 'block';
+        orderReadyOverlay.style.display = 'flex';
         setTimeout(() => {
             orderReadyOverlay.style.display = 'none';
             videoContainer.classList.remove('blur');
