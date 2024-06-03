@@ -1,4 +1,3 @@
-
 body {
     font-family: 'Roboto', sans-serif;
     margin: 0;
@@ -50,6 +49,8 @@ body {
 #order-cards {
     display: flex;
     justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
 ul {
@@ -61,11 +62,17 @@ ul {
 
 ul li {
     background: #333;
-    padding: 15px;
-    border-radius: 5px;
+    padding: 20px;
+    border-radius: 10px;
     box-shadow: 0 0 10px rgba(0,0,0,0.5);
     cursor: pointer;
     transition: background 0.3s;
+    min-width: 150px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 ul li:hover {
@@ -80,16 +87,27 @@ ul li:hover {
     background-color: green;
 }
 
+.order-number {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.order-time, .order-status {
+    font-size: 1.2em;
+    margin-bottom: 5px;
+}
+
 button {
     display: block;
     margin: 20px auto;
-    padding: 15px 30px;
+    padding: 10px 20px;
     background-color: #f2a20c;
     color: #fff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 1.2em;
+    font-size: 1em;
     transition: background 0.3s;
 }
 
