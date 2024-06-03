@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Hickory BBQ Joint</title>
+    <link rel="stylesheet" href="admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-container">
+        <h1>Admin Dashboard</h1>
+        <nav>
+            <select id="admin-actions">
+                <option value="view-orders">View Orders</option>
+                <option value="update-order">Update Order</option>
+                <option value="cancel-order">Cancel Order</option>
+                <option value="track-progress">Track Progress</option>
+                <option value="app-settings">App Settings</option>
+            </select>
+        </nav>
+        <div id="admin-content">
+            <!-- Dynamic admin content will be inserted here -->
+        </div>
+    </div>
+    <script src="admin.js"></script>
+</body>
+</html>
