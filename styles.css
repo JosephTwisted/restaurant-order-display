@@ -87,7 +87,6 @@ body {
 }
 
 .order-list li {
-    background: #333;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0,0,0,0.5);
@@ -103,8 +102,11 @@ body {
 }
 
 .order-list li:hover {
-    background: #444;
+    background: #333;
 }
+
+.preparing {
+    background-color: #444;
 
 .pending {
     background-color: orange;
