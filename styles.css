@@ -58,14 +58,14 @@ body {
 .logo {
     position: absolute;
     bottom: 20px;
-    right: 20px;
+    right: 50px;
     width: 50px;
     z-index: 2;
 }
 
 #orders h2 {
-    color: #f2a20c;
-    border-bottom: 2px solid #f2a20c;
+    color: #ce3d28;
+    border-bottom: 2px solid #ce3d28;
     padding-bottom: 10px;
     margin-bottom: 20px;
     font-family: 'Posey', sans-serif;
@@ -133,7 +133,7 @@ button {
     display: block;
     margin: 20px auto;
     padding: 10px 20px;
-    background-color: #f2a20c;
+    background-color: #ce3d28;
     color: #fff;
     border: none;
     border-radius: 5px;
