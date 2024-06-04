@@ -37,7 +37,7 @@ body {
 }
 
 #orders-container {
-    width: 30%;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -46,14 +46,13 @@ body {
     z-index: 1;
     flex-direction: column;
     position: absolute;
-    right: 0;
-    top: 0;
     bottom: 0;
-    overflow-y: auto;
+    overflow-x: auto;
 }
 
 #orders {
     text-align: center;
+    width: 100%;
 }
 
 .logo {
@@ -74,16 +73,16 @@ body {
 
 #order-cards {
     display: flex;
-    flex-direction: column;
+    justify-content: flex-start;
+    overflow-x: auto;
     gap: 15px;
-    width: 100%;
+    padding: 0 20px;
 }
 
 .order-list {
     list-style-type: none;
     padding: 0;
     display: flex;
-    flex-direction: column;
     gap: 10px;
 }
 
@@ -94,6 +93,7 @@ body {
     box-shadow: 0 0 10px rgba(0,0,0,0.5);
     cursor: pointer;
     transition: background 0.3s;
+    min-width: 150px;
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -162,7 +162,7 @@ button:hover {
 #order-ready-content {
     font-family: 'Posey', sans-serif;
     background: #f2a20c;
-    padding: 20px;
+    padding: 50px;
     border-radius: 10px;
 }
 
