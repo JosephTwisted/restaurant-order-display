@@ -57,9 +57,10 @@ body {
 
 .logo {
     position: absolute;
-    bottom: 10px;
-    right: 10px;
+    bottom: 20px;
+    right: 20px;
     width: 150px;
+    z-index: 2;
 }
 
 #orders h2 {
@@ -156,7 +157,7 @@ button:hover {
     color: white;
     text-align: center;
     font-size: 3em;
-    z-index: 2;
+    z-index: 3;
     align-items: center;
     justify-content: center;
     display: flex;
