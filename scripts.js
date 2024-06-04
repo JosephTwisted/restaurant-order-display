@@ -5,8 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const orderReadyOverlay = document.getElementById('order-ready-overlay');
     const orderReadyContent = document.getElementById('order-ready-content');
     const videoContainer = document.getElementById('video-container');
-    const prevArrow = document.getElementById('prev-arrow');
-    const nextArrow = document.getElementById('next-arrow');
 
     let orderNumber = 1;
     const ordersInProgress = [];
@@ -39,6 +37,10 @@ document.addEventListener('DOMContentLoaded', () => {
             li.addEventListener('click', () => removeOrder(order.number));
             completedList.appendChild(li);
         });
+
+        // Scroll to the first order
+        inProgressList.scrollTo(0, 0);
+        completedList.scrollTo(0, 0);
     }
 
     function updateOrderTimes() {
@@ -92,28 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
             renderOrders();
         }
     }
-
-    prevArrow.addEventListener('click', () => {
-        inProgressList.scrollBy({
-            left: -150,
-            behavior: 'smooth'
-        });
-        completedList.scrollBy({
-            left: -150,
-            behavior: 'smooth'
-        });
-    });
-
-    nextArrow.addEventListener('click', () => {
-        inProgressList.scrollBy({
-            left: 150,
-            behavior: 'smooth'
-        });
-        completedList.scrollBy({
-            left: 150,
-            behavior: 'smooth'
-        });
-    });
 
     renderOrders();
 });
