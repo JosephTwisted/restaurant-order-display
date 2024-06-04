@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const orderReadyOverlay = document.getElementById('order-ready-overlay');
     const orderReadyContent = document.getElementById('order-ready-content');
     const videoContainer = document.getElementById('video-container');
+    const prevArrow = document.getElementById('prev-arrow');
+    const nextArrow = document.getElementById('next-arrow');
 
     let orderNumber = 1;
     const ordersInProgress = [];
@@ -90,6 +92,20 @@ document.addEventListener('DOMContentLoaded', () => {
             renderOrders();
         }
     }
+
+    prevArrow.addEventListener('click', () => {
+        document.querySelector('#order-cards ul').scrollBy({
+            left: -150,
+            behavior: 'smooth'
+        });
+    });
+
+    nextArrow.addEventListener('click', () => {
+        document.querySelector('#order-cards ul').scrollBy({
+            left: 150,
+            behavior: 'smooth'
+        });
+    });
 
     renderOrders();
 });
