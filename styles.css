@@ -110,11 +110,11 @@ body {
 }
 
 .pending {
-    background-color: orange;
+    background-color: #FFA500;
 }
 
 .finished {
-    background-color: green;
+    background-color: #00FF00;
 }
 
 .order-number {
