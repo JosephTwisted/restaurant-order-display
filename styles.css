@@ -58,7 +58,7 @@ body {
 .logo {
     position: absolute;
     bottom: 10px;
-    right: 50px;
+    right: 10px;
     width: 150px;
 }
 
@@ -89,7 +89,7 @@ body {
 .order-list li {
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
     cursor: pointer;
     transition: background 0.3s;
     min-width: 150px;
@@ -110,11 +110,11 @@ body {
 }
 
 .pending {
-    background-color: #FFA500;
+    background-color: orange;
 }
 
 .finished {
-    background-color: #00FF00;
+    background-color: green;
 }
 
 .order-number {
