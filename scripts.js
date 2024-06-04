@@ -94,14 +94,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     prevArrow.addEventListener('click', () => {
-        document.querySelector('#order-cards ul').scrollBy({
+        inProgressList.scrollBy({
+            left: -150,
+            behavior: 'smooth'
+        });
+        completedList.scrollBy({
             left: -150,
             behavior: 'smooth'
         });
     });
 
     nextArrow.addEventListener('click', () => {
-        document.querySelector('#order-cards ul').scrollBy({
+        inProgressList.scrollBy({
+            left: 150,
+            behavior: 'smooth'
+        });
+        completedList.scrollBy({
             left: 150,
             behavior: 'smooth'
         });
