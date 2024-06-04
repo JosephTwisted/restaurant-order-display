@@ -112,6 +112,7 @@ body {
 
 .finished {
     background-color: green;
+    order: -1;
 }
 
 .order-number {
