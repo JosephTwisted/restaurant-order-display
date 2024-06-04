@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             li.className = 'finished';
             li.addEventListener('click', () => removeOrder(order.number));
-            completedList.appendChild(li);
+            completedList.prepend(li);
         });
 
         // Scroll to the first order
