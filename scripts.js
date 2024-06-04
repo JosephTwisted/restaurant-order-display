@@ -76,7 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const orderIndex = ordersInProgress.findIndex(order => order.number === orderNumber);
         if (orderIndex !== -1) {
             const [order] = ordersInProgress.splice(orderIndex, 1);
-            order.timeLeft = 0;  // Ensure the order is marked as completed
             completedOrders.unshift(order);
             showOrderReady(order.number);
             renderOrders();
