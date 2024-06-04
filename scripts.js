@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="order-time">${order.timeLeft} min</div>
                 <div class="order-status">Being Prepared</div>
             `;
-            li.className = 'pending';
+            li.className = 'preparing';
             li.addEventListener('click', () => completeOrder(order.number));
             ordersList.appendChild(li);
         });
