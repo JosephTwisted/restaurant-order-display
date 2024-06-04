@@ -8,9 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let orderNumber = 1;
     const ordersInProgress = [];
     const completedOrders = [];
-    const timeSlots = [5, 10, 15, 20, 25, 30];
-    let currentSlotIndex = 0;
-    let currentSlotCount = 0;
 
     function renderOrders() {
         ordersList.innerHTML = '';
@@ -79,6 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const orderIndex = ordersInProgress.findIndex(order => order.number === orderNumber);
         if (orderIndex !== -1) {
             const [order] = ordersInProgress.splice(orderIndex, 1);
+            order.timeLeft = 0;  // Ensure the order is marked as completed
             completedOrders.unshift(order);
             showOrderReady(order.number);
             renderOrders();
