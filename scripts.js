@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const inProgressList = document.getElementById('in-progress-list');
-    const completedList = document.getElementById('completed-list');
+    const ordersList = document.getElementById('orders-list');
     const addOrderBtn = document.getElementById('add-order-btn');
     const orderReadyOverlay = document.getElementById('order-ready-overlay');
     const orderReadyContent = document.getElementById('order-ready-content');
@@ -14,21 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentSlotCount = 0;
 
     function renderOrders() {
-        inProgressList.innerHTML = '';
-        completedList.innerHTML = '';
+        ordersList.innerHTML = '';
 
-        ordersInProgress.forEach(order => {
-            const li = document.createElement('li');
-            li.innerHTML = `
-                <div class="order-number">#${String(order.number).padStart(3, '0')}</div>
-                <div class="order-time">${order.timeLeft} min</div>
-                <div class="order-status">Being Prepared</div>
-            `;
-            li.className = order.timeLeft === 0 ? 'pending' : '';
-            li.addEventListener('click', () => completeOrder(order.number));
-            inProgressList.appendChild(li);
-        });
-
+        // Append completed orders first
         completedOrders.forEach(order => {
             const li = document.createElement('li');
             li.innerHTML = `
@@ -38,12 +25,24 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             li.className = 'finished';
             li.addEventListener('click', () => removeOrder(order.number));
-            completedList.prepend(li);
+            ordersList.appendChild(li);
+        });
+
+        // Append in-progress orders
+        ordersInProgress.forEach(order => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <div class="order-number">#${String(order.number).padStart(3, '0')}</div>
+                <div class="order-time">${order.timeLeft} min</div>
+                <div class="order-status">Being Prepared</div>
+            `;
+            li.className = order.timeLeft === 0 ? 'pending' : '';
+            li.addEventListener('click', () => completeOrder(order.number));
+            ordersList.appendChild(li);
         });
 
         // Scroll to the first order
-        inProgressList.scrollTo(0, 0);
-        completedList.scrollTo(0, 0);
+        ordersList.scrollTo(0, 0);
     }
 
     function updateOrderTimes() {
