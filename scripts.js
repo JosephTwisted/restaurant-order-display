@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let orderNumber = 1;
     const ordersInProgress = [];
     const completedOrders = [];
+    const timeSlots = [5, 10, 15, 20, 25, 30];
+    let currentSlotIndex = 0;
+    let currentSlotCount = 0;
 
     function renderOrders() {
         inProgressList.innerHTML = '';
@@ -55,21 +58,29 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(updateOrderTimes, 60000);
 
     addOrderBtn.addEventListener('click', () => {
-        const timeOptions = [5, 10, 15, 20, 25, 30];
-        const timeLeft = parseInt(prompt('Enter estimated time (5, 10, 15, 20, 25, 30 minutes):'));
-        if (timeOptions.includes(timeLeft)) {
-            ordersInProgress.push({ number: orderNumber++, timeLeft });
-            renderOrders();
-        } else {
-            alert('Invalid time. Please enter one of the following: 5, 10, 15, 20, 25, 30 minutes.');
+        let lastOrderTime = 0;
+        if (ordersInProgress.length > 0) {
+            lastOrderTime = Math.max(...ordersInProgress.map(order => order.timeLeft));
         }
+        let timeLeft = prompt('Enter estimated time in minutes (press Enter for automatic):');
+        if (!timeLeft) {
+            timeLeft = lastOrderTime + 5;
+        } else {
+            timeLeft = parseInt(timeLeft);
+            if (isNaN(timeLeft) || timeLeft <= lastOrderTime) {
+                alert(`Invalid time. Please enter a time greater than ${lastOrderTime} minutes.`);
+                return;
+            }
+        }
+        ordersInProgress.push({ number: orderNumber++, timeLeft });
+        renderOrders();
     });
 
     function completeOrder(orderNumber) {
         const orderIndex = ordersInProgress.findIndex(order => order.number === orderNumber);
         if (orderIndex !== -1) {
             const [order] = ordersInProgress.splice(orderIndex, 1);
-            completedOrders.push(order);
+            completedOrders.unshift(order);
             showOrderReady(order.number);
             renderOrders();
         }
@@ -94,6 +105,13 @@ document.addEventListener('DOMContentLoaded', () => {
             renderOrders();
         }
     }
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            orderReadyOverlay.style.display = 'none';
+            videoContainer.classList.remove('blur');
+        }
+    });
 
     renderOrders();
 });
