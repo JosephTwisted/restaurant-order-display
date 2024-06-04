@@ -45,10 +45,14 @@ body {
     z-index: 1;
     flex-direction: column;
     position: relative;
+    width: 70%;
+    margin: 0 auto;
 }
 
 #orders {
     text-align: center;
+    position: relative;
+    width: 100%;
 }
 
 .logo {
@@ -70,8 +74,10 @@ body {
 #order-cards {
     display: flex;
     justify-content: center;
-    flex-wrap: wrap;
-    gap: 15px;
+    align-items: center;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    position: relative;
 }
 
 ul {
@@ -79,6 +85,8 @@ ul {
     padding: 0;
     display: flex;
     gap: 10px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
 }
 
 ul li {
@@ -129,4 +137,58 @@ button {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 
+    font-size: 1em;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background-color: #e59400;
+}
+
+.arrow {
+    background: transparent;
+    border: none;
+    color: #f2a20c;
+    font-size: 2em;
+    cursor: pointer;
+}
+
+.arrow:hover {
+    color: #e59400;
+}
+
+#order-ready-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    text-align: center;
+    font-size: 3em;
+    z-index: 2;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+#order-ready-content {
+    font-family: 'Posey', sans-serif;
+    background: #f2a20c;
+    padding: 20px;
+    border-radius: 10px;
+    animation: fadeInOut 3s;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.blur {
+    filter: blur(5px);
+}
