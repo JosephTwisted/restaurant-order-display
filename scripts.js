@@ -5,28 +5,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const orderReadyContent = document.getElementById('order-ready-content');
     const videoContainer = document.getElementById('video-container');
 
-    const db = firebase.database().ref('orders');
-
     let orderNumber = 1;
     const ordersInProgress = [];
     const completedOrders = [];
-
-    // Real-time listener for order updates
-    db.on('value', (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-            ordersInProgress.length = 0;
-            completedOrders.length = 0;
-            Object.values(data).forEach(order => {
-                if (order.status === 'completed') {
-                    completedOrders.push(order);
-                } else {
-                    ordersInProgress.push(order);
-                }
-            });
-            renderOrders();
-        }
-    });
 
     function renderOrders() {
         ordersList.innerHTML = '';
@@ -65,7 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
         ordersInProgress.forEach(order => {
             if (order.timeLeft > 0) {
                 order.timeLeft -= 1;
-                db.child(order.number).update({ timeLeft: order.timeLeft });
             }
         });
         renderOrders();
@@ -88,19 +68,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
         }
-        const newOrder = { number: orderNumber++, timeLeft, status: 'in-progress' };
-        ordersInProgress.push(newOrder);
-        db.child(newOrder.number).set(newOrder);
+        ordersInProgress.push({ number: orderNumber++, timeLeft });
+        renderOrders();
     });
 
     function completeOrder(orderNumber) {
         const orderIndex = ordersInProgress.findIndex(order => order.number === orderNumber);
         if (orderIndex !== -1) {
             const [order] = ordersInProgress.splice(orderIndex, 1);
-            order.status = 'completed';
             completedOrders.unshift(order);
-            db.child(order.number).update({ status: 'completed', timeLeft: 0 });
             showOrderReady(order.number);
+            renderOrders();
         }
     }
 
@@ -120,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const orderIndex = completedOrders.findIndex(order => order.number === orderNumber);
         if (orderIndex !== -1) {
             completedOrders.splice(orderIndex, 1);
-            db.child(orderNumber).remove();
+            renderOrders();
         }
     }
 
