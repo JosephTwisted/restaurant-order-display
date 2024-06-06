@@ -3,24 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Hickory BBQ Joint</title>
-    <link rel="stylesheet" href="admin.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <title>Hickory BBQ Joint - Admin</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+    <script>
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyCimFXgJYIXZgKIV4kzWQihtspXTa7sF-Q",
+        authDomain: "hickoryonlineorder.firebaseapp.com",
+        projectId: "hickoryonlineorder",
+        storageBucket: "hickoryonlineorder.appspot.com",
+        messagingSenderId: "505589625096",
+        appId: "1:505589625096:web:559505647e204c157a7cbd",
+        measurementId: "G-S07LBX209D"
+      };
+
+      // Initialize Firebase
+      const app = firebase.initializeApp(firebaseConfig);
+      const analytics = firebase.analytics();
+      const database = firebase.database();
+    </script>
 </head>
 <body>
-    <div class="admin-container">
-        <h1>Admin Dashboard</h1>
-        <nav>
-            <select id="admin-actions">
-                <option value="view-orders">View Orders</option>
-                <option value="update-order">Update Order</option>
-                <option value="cancel-order">Cancel Order</option>
-                <option value="track-progress">Track Progress</option>
-                <option value="app-settings">App Settings</option>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="admin.html">Admin</a></li>
+            <li><a href="#" id="settings-link">Settings</a></li>
+        </ul>
+    </nav>
+    <div id="admin-container">
+        <h2>Admin Panel</h2>
+        <div id="order-actions">
+            <input type="text" id="search-orders" placeholder="Search orders...">
+            <select id="filter-status">
+                <option value="">All</option>
+                <option value="in-progress">In Progress</option>
+                <option value="completed">Completed</option>
             </select>
-        </nav>
-        <div id="admin-content">
-            <!-- Dynamic admin content will be inserted here -->
+            <button id="add-order-btn">Add New Order</button>
+        </div>
+        <div id="order-management">
+            <button id="refresh-orders-btn">Refresh Orders</button>
+            <ul id="orders-list" class="order-list"></ul>
+        </div>
+        <div id="order-history">
+            <h3>Order History</h3>
+            <ul id="history-list" class="order-list"></ul>
+        </div>
+    </div>
+    <div id="order-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add New Order</h2>
+            <form id="new-order-form">
+                <h3>Sandwiches</h3>
+                <button type="button" class="item-btn" data-category="sandwich" data-item="Pulled Pork" data-price="9.00">Pulled Pork €9.00</button>
+                <button type="button" class="item-btn" data-category="sandwich" data-item="Pulled Chicken" data-price="9.00">Pulled Chicken €9.00</button>
+                <button type="button" class="item-btn" data-category="sandwich" data-item="Pulled Beef" data-price="10.00">Pulled Beef €10.00</button>
+                <button type="button" class="item-btn" data-category="sandwich" data-item="Beef Brisket" data-price="13.50">Beef Brisket €13.50</button>
+                <button type="button" class="item-btn" data-category="sandwich" data-item="Vegan Burger" data-price="12.00">Vegan Burger €12.00</button>
+                <h3>Fries</h3>
+                <button type="button" class="item-btn" data-category="fries" data-item="Classic Fries" data-price="3.50">Classic Fries €3.50</button>
+                <button type="button" class="item-btn" data-category="fries" data-item="Cheesy Fries" data-price="4.50">Cheesy Fries €4.50</button>
+                <h3>Add Ons</h3>
+                <button type="button" class="item-btn" data-category="addon" data-item="Gluten Free Bun" data-price="1.00">Gluten Free Bun €1.00</button>
+                <h3>Drinks</h3>
+                <button type="button" class="item-btn" data-category="drink" data-item="Soft Drink" data-price="3.00">Soft Drink €3.00</button>
+                <button type="button" class="item-btn" data-category="drink" data-item="Water" data-price="2.00">Water €2.00</button>
+                <button type="button" class="item-btn" data-category="drink" data-item="Energy Drink" data-price="4.00">Energy Drink €4.00</button>
+                <button type="button" class="item-btn" data-category="drink" data-item="Specials" data-price="5.00">Specials €5.00</button>
+                <h3>Order Time</h3>
+                <input type="number" id="order-time" placeholder="Enter time in minutes" min="1"><br>
+                <div id="order-summary"></div>
+                <h3>Total: €<span id="total-amount">0.00</span></h3>
+                <button type="submit">Add Order</button>
+            </form>
+        </div>
+    </div>
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Settings</h2>
+            <form id="settings-form">
+                <h3>Sandwiches</h3>
+                <input type="number" name="pricePulledPork" step="0.01" placeholder="Pulled Pork €9.00">
+                <input type="number" name="pricePulledChicken" step="0.01" placeholder="Pulled Chicken €9.00">
+                <input type="number" name="pricePulledBeef" step="0.01" placeholder="Pulled Beef €10.00">
+                <input type="number" name="priceBeefBrisket" step="0.01" placeholder="Beef Brisket €13.50">
+                <input type="number" name="priceVeganBurger" step="0.01" placeholder="Vegan Burger €12.00">
+                <h3>Fries</h3>
+                <input type="number" name="priceClassicFries" step="0.01" placeholder="Classic Fries €3.50">
+                <input type="number" name="priceCheesyFries" step="0.01" placeholder="Cheesy Fries €4.50">
+                <h3>Add Ons</h3>
+                <input type="number" name="priceGlutenFreeBun" step="0.01" placeholder="Gluten Free Bun €1.00">
+                <h3>Drinks</h3>
+                <input type="number" name="priceSoftDrink" step="0.01" placeholder="Soft Drink €3.00">
+                <input type="number" name="priceWater" step="0.01" placeholder="Water €2.00">
+                <input type="number" name="priceEnergyDrink" step="0.01" placeholder="Energy Drink €4.00">
+                <input type="number" name="priceSpecials" step="0.01" placeholder="Specials €5.00">
+                <button type="submit">Save Changes</button>
+            </form>
         </div>
     </div>
     <script src="admin.js"></script>
