@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
     const ordersList = document.getElementById('orders-list');
-    const addOrderBtn = document.getElementById('add-order-btn');
     const orderReadyOverlay = document.getElementById('order-ready-overlay');
     const orderReadyContent = document.getElementById('order-ready-content');
     const videoContainer = document.getElementById('video-container');
@@ -12,14 +11,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const completedOrders = [];
 
     // Fetch initial data
-    db.once('value', (snapshot) => {
+    db.on('value', (snapshot) => {
         const data = snapshot.val();
+        ordersInProgress.length = 0;
+        completedOrders.length = 0;
         if (data) {
             Object.values(data).forEach(order => {
                 if (order.status === 'completed') {
                     completedOrders.push(order);
                 } else {
                     ordersInProgress.push(order);
+                }
+                // Update orderNumber to ensure it keeps incrementing
+                if (order.number >= orderNumber) {
+                    orderNumber = order.number + 1;
                 }
             });
             renderOrders();
@@ -38,7 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="order-status">For Pickup</div>
             `;
             li.className = 'finished';
-            li.addEventListener('click', () => removeOrder(order.number));
             ordersList.appendChild(li);
         });
 
@@ -51,57 +55,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="order-status">Being Prepared</div>
             `;
             li.className = 'preparing';
-            li.addEventListener('click', () => completeOrder(order.number));
             ordersList.appendChild(li);
         });
 
         // Scroll to the first order
         ordersList.scrollTo(0, 0);
-    }
-
-    function updateOrderTimes() {
-        ordersInProgress.forEach(order => {
-            if (order.timeLeft > 0) {
-                order.timeLeft -= 1;
-                db.child(order.number).update({ timeLeft: order.timeLeft });
-            }
-        });
-        renderOrders();
-    }
-
-    setInterval(updateOrderTimes, 60000);
-
-    addOrderBtn.addEventListener('click', () => {
-        let lastOrderTime = 0;
-        if (ordersInProgress.length > 0) {
-            lastOrderTime = Math.max(...ordersInProgress.map(order => order.timeLeft));
-        }
-        let timeLeft = prompt('Enter estimated time in minutes (press Enter for automatic):');
-        if (!timeLeft) {
-            timeLeft = lastOrderTime + 5;
-        } else {
-            timeLeft = parseInt(timeLeft);
-            if (isNaN(timeLeft) || timeLeft <= lastOrderTime) {
-                alert(`Invalid time. Please enter a time greater than ${lastOrderTime} minutes.`);
-                return;
-            }
-        }
-        const newOrder = { number: orderNumber++, timeLeft, status: 'in-progress' };
-        ordersInProgress.push(newOrder);
-        db.child(newOrder.number).set(newOrder);
-        renderOrders();
-    });
-
-    function completeOrder(orderNumber) {
-        const orderIndex = ordersInProgress.findIndex(order => order.number === orderNumber);
-        if (orderIndex !== -1) {
-            const [order] = ordersInProgress.splice(orderIndex, 1);
-            order.status = 'completed';
-            completedOrders.unshift(order);
-            db.child(order.number).update({ status: 'completed', timeLeft: 0 });
-            showOrderReady(order.number);
-            renderOrders();
-        }
     }
 
     function showOrderReady(orderNumber) {
@@ -114,15 +72,6 @@ document.addEventListener('DOMContentLoaded', () => {
             orderReadyOverlay.style.display = 'none';
             videoContainer.classList.remove('blur');
         }, 3000);
-    }
-
-    function removeOrder(orderNumber) {
-        const orderIndex = completedOrders.findIndex(order => order.number === orderNumber);
-        if (orderIndex !== -1) {
-            completedOrders.splice(orderIndex, 1);
-            db.child(orderNumber).remove();
-            renderOrders();
-        }
     }
 
     document.addEventListener('keydown', (event) => {
