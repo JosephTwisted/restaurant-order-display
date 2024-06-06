@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterStatus = document.getElementById('filter-status');
     const orderModal = document.getElementById('order-modal');
     const newOrderForm = document.getElementById('new-order-form');
-    const closeModal = document.querySelector('.close');
+    const closeModal = document.querySelectorAll('.close');
     const historyList = document.getElementById('history-list');
     const settingsLink = document.getElementById('settings-link');
     const settingsModal = document.getElementById('settings-modal');
@@ -14,15 +14,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const settingsForm = document.getElementById('settings-form');
     const totalAmount = document.getElementById('total-amount');
     const orderSummary = document.getElementById('order-summary');
+    const orderDetailModal = document.getElementById('order-detail-modal');
+    const orderDetailContent = document.getElementById('order-detail-content');
+    const loadingIndicator = document.getElementById('loading-indicator');
 
     const db = firebase.database().ref('orders');
     const historyDb = firebase.database().ref('orderHistory');
+    const settingsDb = firebase.database().ref('settings');
 
     let orderNumber = 1;
     const ordersInProgress = [];
     const completedOrders = [];
     const orderHistory = [];
-    const orderDetails = {};
+    let orderDetails = {};
     let prices = {
         "Pulled Pork": 9.00,
         "Pulled Chicken": 9.00,
@@ -38,7 +42,16 @@ document.addEventListener('DOMContentLoaded', () => {
         "Specials": 5.00
     };
 
+    function showLoadingIndicator() {
+        loadingIndicator.style.display = 'block';
+    }
+
+    function hideLoadingIndicator() {
+        loadingIndicator.style.display = 'none';
+    }
+
     function fetchOrders() {
+        showLoadingIndicator();
         ordersList.innerHTML = '';
         ordersInProgress.length = 0;
         completedOrders.length = 0;
@@ -58,6 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
                 renderOrders();
+                hideLoadingIndicator();
             }
         });
 
@@ -67,6 +81,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 orderHistory.length = 0;
                 Object.values(data).forEach(order => orderHistory.push(order));
                 renderHistory();
+            }
+        });
+
+        settingsDb.once('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                prices = data.prices;
             }
         });
     }
@@ -87,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
         filteredOrders.forEach(order => {
             const li = document.createElement('li');
             li.innerHTML = `
-                <div class="order-number">#${String(order.number).padStart(3, '0')}</div>
+                <div class="order-number" onclick="viewOrderDetails(${order.number})">#${String(order.number).padStart(3, '0')}</div>
                 <div class="order-time">${order.timeLeft || 'Ready'} min</div>
                 <div class="order-status">${order.status.replace('-', ' ')}</div>
                 <button onclick="editOrder(${order.number})">Edit</button>
@@ -103,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
         orderHistory.forEach(order => {
             const li = document.createElement('li');
             li.innerHTML = `
-                <div class="order-number">#${String(order.number).padStart(3, '0')}</div>
+                <div class="order-number" onclick="viewOrderDetails(${order.number})">#${String(order.number).padStart(3, '0')}</div>
                 <div class="order-time">${order.timeLeft || 'Ready'} min</div>
                 <div class="order-status">${order.status.replace('-', ' ')}</div>
                 <div class="order-details">${order.details}</div>
@@ -121,13 +142,11 @@ document.addEventListener('DOMContentLoaded', () => {
         settingsModal.style.display = 'block';
     });
 
-    closeModal.onclick = () => {
-        orderModal.style.display = 'none';
-    };
-
-    settingsClose.onclick = () => {
-        settingsModal.style.display = 'none';
-    };
+    closeModal.forEach(modalClose => {
+        modalClose.onclick = () => {
+            modalClose.closest('.modal').style.display = 'none';
+        }
+    });
 
     window.onclick = (event) => {
         if (event.target === orderModal) {
@@ -135,6 +154,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (event.target === settingsModal) {
             settingsModal.style.display = 'none';
+        }
+        if (event.target === orderDetailModal) {
+            orderDetailModal.style.display = 'none';
         }
     };
 
@@ -154,10 +176,13 @@ document.addEventListener('DOMContentLoaded', () => {
     settingsForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const formData = new FormData(settingsForm);
+        const newPrices = {};
         formData.forEach((value, key) => {
             const itemName = key.replace('price', '');
-            prices[itemName] = parseFloat(value);
+            newPrices[itemName] = parseFloat(value);
         });
+        prices = newPrices;
+        settingsDb.set({ prices });
         settingsModal.style.display = 'none';
     });
 
@@ -249,6 +274,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const order = ordersInProgress[orderIndex];
             orderModal.style.display = 'block';
             // Populate modal with order details for editing
+        }
+    };
+
+    window.viewOrderDetails = (orderNumber) => {
+        const orderIndex = ordersInProgress.findIndex(order => order.number === orderNumber);
+        const order = ordersInProgress[orderIndex] || completedOrders.find(order => order.number === orderNumber);
+        if (order) {
+            orderDetailContent.innerHTML = `
+                <h2>Order #${String(order.number).padStart(3, '0')}</h2>
+                <p>Status: ${order.status.replace('-', ' ')}</p>
+                <p>Time Left: ${order.timeLeft || 'Ready'} min</p>
+                <p>Details: ${order.details}</p>
+                <p>Timestamp: ${order.timestamp}</p>
+            `;
+            orderDetailModal.style.display = 'block';
         }
     };
 
