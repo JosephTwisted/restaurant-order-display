@@ -7,6 +7,26 @@
     <link rel="stylesheet" href="styles.css">
     <link href="posey.ttf" rel="stylesheet">
     <link href="lufga.ttf" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+    <script>
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyCimFXgJYIXZgKIV4kzWQihtspXTa7sF-Q",
+        authDomain: "hickoryonlineorder.firebaseapp.com",
+        projectId: "hickoryonlineorder",
+        storageBucket: "hickoryonlineorder.appspot.com",
+        messagingSenderId: "505589625096",
+        appId: "1:505589625096:web:559505647e204c157a7cbd",
+        measurementId: "G-S07LBX209D"
+      };
+
+      // Initialize Firebase
+      const app = firebase.initializeApp(firebaseConfig);
+      const analytics = firebase.analytics();
+      const database = firebase.database();
+    </script>
 </head>
 <body>
     <div id="video-container">
@@ -14,7 +34,7 @@
     </div>
     <div id="orders-container">
         <div id="orders">
-            <img src="Hickory_Icon_Red.png" alt="Hickory BBQ Joint Logo" class="logo">
+            <img src="logo.png" alt="Hickory BBQ Joint Logo" class="logo">
             <h2>Orders</h2>
             <div id="order-cards">
                 <ul id="orders-list" class="order-list"></ul>
