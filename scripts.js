@@ -142,12 +142,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Ensure overlay is hidden initially
     hideOrderReadyOverlay();
 
+    // Function to remove hide order ready overlay
     function hideOrderReadyOverlay() {
     const orderReadyOverlay = document.getElementById('order-ready-overlay');
     const videoContainer = document.getElementById('video-container');
     orderReadyOverlay.style.display = 'none';
     videoContainer.classList.remove('blur');
 }
+
 
     fetchOrders();
 });
