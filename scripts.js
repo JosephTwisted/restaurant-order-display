@@ -109,5 +109,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Ensure overlay is hidden on initial load
+    orderReadyOverlay.style.display = 'none';
+    videoContainer.classList.remove('blur');
+
     renderOrders();
 });
