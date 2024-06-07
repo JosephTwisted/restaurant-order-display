@@ -3,31 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hickory BBQ Joint - Order Status</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="posey.ttf" rel="stylesheet">
-    <link href="lufga.ttf" rel="stylesheet">
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-    <script src="scripts.js" defer></script>
+    <title>Firebase Authentication Example</title>
 </head>
 <body>
-    <div id="video-container">
-        <iframe id="background-video" src="https://www.youtube.com/embed/jReeajPdgSM?autoplay=1&mute=1&playlist=jReeajPdgSM" frameborder="0" allow="autoplay; loop;" allowfullscreen></iframe>
-    </div>
-    <div id="orders-container">
-        <div id="orders">
-            <img src="logo.png" alt="Hickory BBQ Joint Logo" class="logo">
-            <h2>Orders</h2>
-            <div id="order-cards">
-                <ul id="orders-list" class="order-list"></ul>
-            </div>
-            <button id="add-order-btn">Add New Order</button>
+    <h1>Firebase Authentication Example</h1>
+
+    <div id="auth-container">
+        <div id="sign-up-container">
+            <h2>Sign Up</h2>
+            <input type="email" id="sign-up-email" placeholder="Email">
+            <input type="password" id="sign-up-password" placeholder="Password">
+            <button id="sign-up-button">Sign Up</button>
+        </div>
+        
+        <div id="sign-in-container">
+            <h2>Sign In</h2>
+            <input type="email" id="sign-in-email" placeholder="Email">
+            <input type="password" id="sign-in-password" placeholder="Password">
+            <button id="sign-in-button">Sign In</button>
+        </div>
+
+        <div id="sign-out-container" style="display: none;">
+            <h2>Welcome, <span id="user-email"></span></h2>
+            <button id="sign-out-button">Sign Out</button>
         </div>
     </div>
-    <div id="order-ready-overlay" onclick="hideOrderReadyOverlay()">
-        <div id="order-ready-content"></div>
-    </div>
+
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/9.8.1/firebase-app.js"></script>
+
+    <!-- Add Firebase products that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/9.8.1/firebase-auth.js"></script>
+    
+    <!-- Your custom scripts -->
+    <script src="scripts.js"></script>
 </body>
 </html>
