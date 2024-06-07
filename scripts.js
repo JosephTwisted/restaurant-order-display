@@ -1,5 +1,5 @@
-import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, updateDoc, deleteDoc, getDocs, where, doc } from "firebase/firestore";
+import { initializeApp } from "./node_modules/firebase/app";
+import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, updateDoc, deleteDoc, getDocs, where, doc } from "./node_modules/firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -18,12 +18,12 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // Define hideOrderReadyOverlay globally
-function hideOrderReadyOverlay() {
+window.hideOrderReadyOverlay = function() {
     const orderReadyOverlay = document.getElementById('order-ready-overlay');
     const videoContainer = document.getElementById('video-container');
     orderReadyOverlay.style.display = 'none';
     videoContainer.classList.remove('blur');
-}
+};
 
 document.addEventListener('DOMContentLoaded', () => {
     const ordersList = document.getElementById('orders-list');
