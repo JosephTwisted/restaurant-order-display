@@ -137,19 +137,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Add touch and click event listeners to the overlay
     orderReadyOverlay.addEventListener('click', hideOrderReadyOverlay);
+    orderReadyOverlay.addEventListener('touchend', hideOrderReadyOverlay);
 
     // Ensure overlay is hidden initially
     hideOrderReadyOverlay();
-
-    // Function to remove hide order ready overlay
-    function hideOrderReadyOverlay() {
-    const orderReadyOverlay = document.getElementById('order-ready-overlay');
-    const videoContainer = document.getElementById('video-container');
-    orderReadyOverlay.style.display = 'none';
-    videoContainer.classList.remove('blur');
-}
-
 
     fetchOrders();
 });
