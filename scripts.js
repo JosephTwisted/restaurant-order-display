@@ -136,5 +136,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     orderReadyOverlay.addEventListener('click', hideOrderReadyOverlay);
 
+    // Ensure overlay is hidden initially
+    hideOrderReadyOverlay();
+
     fetchOrders();
 });
