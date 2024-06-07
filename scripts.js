@@ -88,10 +88,11 @@ document.addEventListener('DOMContentLoaded', () => {
         videoContainer.classList.add('blur');
         orderReadyContent.textContent = `Order #${String(orderNumber).padStart(3, '0')} is Ready!`;
         orderReadyOverlay.style.display = 'flex';
-        setTimeout(() => {
-            orderReadyOverlay.style.display = 'none';
-            videoContainer.classList.remove('blur');
-        }, 3000);
+    }
+
+    function hideOrderReadyOverlay() {
+        orderReadyOverlay.style.display = 'none';
+        videoContainer.classList.remove('blur');
     }
 
     function removeOrder(orderNumber) {
@@ -104,14 +105,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
-            orderReadyOverlay.style.display = 'none';
-            videoContainer.classList.remove('blur');
+            hideOrderReadyOverlay();
         }
     });
 
-    // Ensure overlay is hidden on initial load
-    orderReadyOverlay.style.display = 'none';
-    videoContainer.classList.remove('blur');
+    orderReadyOverlay.addEventListener('click', hideOrderReadyOverlay);
 
     renderOrders();
 });
