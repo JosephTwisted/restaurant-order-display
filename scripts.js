@@ -1,16 +1,21 @@
-// Firebase configuration
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, updateDoc, deleteDoc, getDocs, where, doc } from "firebase/firestore";
+
+// Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyCimFXgJYIXZgKIV4kzWQihtspXTa7sF-Q",
+    authDomain: "hickoryonlineorder.firebaseapp.com",
+    databaseURL: "https://hickoryonlineorder-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "hickoryonlineorder",
+    storageBucket: "hickoryonlineorder.appspot.com",
+    messagingSenderId: "505589625096",
+    appId: "1:505589625096:web:559505647e204c157a7cbd",
+    measurementId: "G-S07LBX209D"
 };
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 document.addEventListener('DOMContentLoaded', () => {
     const ordersList = document.getElementById('orders-list');
@@ -20,7 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const videoContainer = document.getElementById('video-container');
 
     function fetchOrders() {
-        db.collection("orders").orderBy("number").onSnapshot((querySnapshot) => {
+        const q = query(collection(db, "orders"), orderBy("number"));
+        onSnapshot(q, (querySnapshot) => {
             const orders = [];
             querySnapshot.forEach((doc) => {
                 orders.push(doc.data());
@@ -52,16 +58,27 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function addOrder(timeLeft) {
-        const orderNumber = Date.now();
-        db.collection("orders").add({
-            number: orderNumber,
-            timeLeft: timeLeft,
-            status: 'Being Prepared'
-        });
+    async function addOrder(timeLeft) {
+        try {
+            const orderNumber = Date.now();
+            await addDoc(collection(db, "orders"), {
+                number: orderNumber,
+                timeLeft: timeLeft,
+                status: 'Being Prepared'
+            });
+        } catch (e) {
+            console.error("Error adding document: ", e);
+        }
     }
 
-    addOrderBtn.addEventListener('click', () => {
+    addOrderBtn.addEventListener('click', async () => {
+        const ordersInProgress = [];
+        const q = query(collection(db, "orders"), where("status", "==", "Being Prepared"));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+            ordersInProgress.push(doc.data());
+        });
+
         let lastOrderTime = 0;
         if (ordersInProgress.length > 0) {
             lastOrderTime = Math.max(...ordersInProgress.map(order => order.timeLeft));
@@ -79,13 +96,14 @@ document.addEventListener('DOMContentLoaded', () => {
         addOrder(timeLeft);
     });
 
-    function completeOrder(orderNumber) {
-        db.collection("orders").where("number", "==", orderNumber).get()
-            .then(querySnapshot => {
-                querySnapshot.forEach(doc => {
-                    doc.ref.update({ status: 'Ready for Pickup' });
-                });
-            });
+    async function completeOrder(orderNumber) {
+        const q = query(collection(db, "orders"), where("number", "==", orderNumber));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((document) => {
+            const orderDoc = doc(db, "orders", document.id);
+            updateDoc(orderDoc, { status: 'Ready for Pickup' });
+            showOrderReady(orderNumber);
+        });
     }
 
     function showOrderReady(orderNumber) {
@@ -101,13 +119,13 @@ document.addEventListener('DOMContentLoaded', () => {
         videoContainer.classList.remove('blur');
     }
 
-    function removeOrder(orderNumber) {
-        db.collection("orders").where("number", "==", orderNumber).get()
-            .then(querySnapshot => {
-                querySnapshot.forEach(doc => {
-                    doc.ref.delete();
-                });
-            });
+    async function removeOrder(orderNumber) {
+        const q = query(collection(db, "orders"), where("number", "==", orderNumber));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((document) => {
+            const orderDoc = doc(db, "orders", document.id);
+            deleteDoc(orderDoc);
+        });
     }
 
     document.addEventListener('keydown', (event) => {
