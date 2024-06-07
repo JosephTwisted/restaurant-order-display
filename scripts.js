@@ -17,66 +17,55 @@ const auth = firebase.auth();
 
 // Authentication Elements
 const authContainer = document.getElementById('auth-container');
-const loginForm = document.getElementById('login-form');
-const signupForm = document.getElementById('signup-form');
+const googleSigninBtn = document.getElementById('google-signin-btn');
 const content = document.getElementById('content');
 
-// Login Elements
-const loginEmail = document.getElementById('login-email');
-const loginPassword = document.getElementById('login-password');
-const loginBtn = document.getElementById('login-btn');
-const showSignupBtn = document.getElementById('show-signup-btn');
-
-// Signup Elements
-const signupEmail = document.getElementById('signup-email');
-const signupPassword = document.getElementById('signup-password');
-const signupBtn = document.getElementById('signup-btn');
-const showLoginBtn = document.getElementById('show-login-btn');
-
-// Switch to Signup Form
-showSignupBtn.addEventListener('click', () => {
-    loginForm.style.display = 'none';
-    signupForm.style.display = 'block';
-});
-
-// Switch to Login Form
-showLoginBtn.addEventListener('click', () => {
-    signupForm.style.display = 'none';
-    loginForm.style.display = 'block';
-});
-
-// Handle Signup
-signupBtn.addEventListener('click', () => {
-    const email = signupEmail.value;
-    const password = signupPassword.value;
-    auth.createUserWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-            console.log('User signed up:', userCredential.user);
+// Handle Google Sign-In
+googleSigninBtn.addEventListener('click', () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider)
+        .then((result) => {
+            console.log('User signed in:', result.user);
+            checkUserRole(result.user);
         })
         .catch((error) => {
-            console.error('Error signing up:', error.message);
+            console.error('Error during sign in:', error.message);
         });
 });
 
-// Handle Login
-loginBtn.addEventListener('click', () => {
-    const email = loginEmail.value;
-    const password = loginPassword.value;
-    auth.signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-            console.log('User logged in:', userCredential.user);
-        })
-        .catch((error) => {
-            console.error('Error logging in:', error.message);
+// Check User Role
+function checkUserRole(user) {
+    db.collection("users").doc(user.uid).get()
+        .then((doc) => {
+            if (doc.exists) {
+                const userData = doc.data();
+                if (userData.role === 'admin') {
+                    authContainer.style.display = 'none';
+                    content.style.display = 'block';
+                    fetchOrders();
+                } else {
+                    alert("You do not have the necessary permissions to access this application.");
+                    auth.signOut();
+                }
+            } else {
+                // New user, add to Firestore with default role 'user'
+                db.collection("users").doc(user.uid).set({
+                    email: user.email,
+                    role: 'user'
+                }).then(() => {
+                    alert("You do not have the necessary permissions to access this application.");
+                    auth.signOut();
+                });
+            }
+        }).catch((error) => {
+            console.error('Error checking user role:', error.message);
         });
-});
+}
 
 // Auth State Listener
 auth.onAuthStateChanged((user) => {
     if (user) {
-        authContainer.style.display = 'none';
-        content.style.display = 'block';
-        fetchOrders();
+        checkUserRole(user);
     } else {
         authContainer.style.display = 'block';
         content.style.display = 'none';
