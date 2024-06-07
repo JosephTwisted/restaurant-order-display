@@ -17,6 +17,14 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// Define hideOrderReadyOverlay globally
+function hideOrderReadyOverlay() {
+    const orderReadyOverlay = document.getElementById('order-ready-overlay');
+    const videoContainer = document.getElementById('video-container');
+    orderReadyOverlay.style.display = 'none';
+    videoContainer.classList.remove('blur');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const ordersList = document.getElementById('orders-list');
     const addOrderBtn = document.getElementById('add-order-btn');
@@ -112,11 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
         videoContainer.classList.add('blur');
         orderReadyContent.textContent = `Order #${String(orderNumber).padStart(3, '0')} is Ready!`;
         orderReadyOverlay.style.display = 'flex';
-    }
-
-    function hideOrderReadyOverlay() {
-        orderReadyOverlay.style.display = 'none';
-        videoContainer.classList.remove('blur');
     }
 
     async function removeOrder(orderNumber) {
