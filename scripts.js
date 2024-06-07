@@ -22,15 +22,69 @@ const content = document.getElementById('content');
 
 // Handle Google Sign-In
 googleSigninBtn.addEventListener('click', () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider)
-        .then((result) => {
-            console.log('User signed in:', result.user);
-            checkUserRole(result.user);
+// Handle Email and Password Login
+loginBtn.addEventListener('click', () => {
+    const email = emailInput.value;
+    const password = passwordInput.value;
+    auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            // Signed in
+            const user = userCredential.user;
+            console.log('User signed in:', user);
+            checkUserRole(user);
         })
         .catch((error) => {
             console.error('Error during sign in:', error.message);
         });
+});
+
+// Check User Role
+function checkUserRole(user) {
+    db.collection("users").doc(user.uid).get()
+        .then((doc) => {
+            if (doc.exists) {
+                const userData = doc.data();
+                if (userData.role === 'admin') {
+                    authContainer.style.display = 'none';
+                    content.style.display = 'block';
+                    fetchOrders();
+                } else {
+                    alert("You do not have the necessary permissions to access this application.");
+                    auth.signOut();
+                }
+            } else {
+                // New user, add to Firestore with default role 'user'
+                db.collection("users").doc(user.uid).set({
+                    email: user.email,
+                    role: 'user'
+                }).then(() => {
+                    alert("You do not have the necessary permissions to access this application.");
+                    auth.signOut();
+                });
+            }
+        }).catch((error) => {
+            console.error('Error checking user role:', error.message);
+        });
+}
+
+// Auth State Listener
+auth.onAuthStateChanged((user) => {
+    if (user) {
+        checkUserRole(user);
+    } else {
+        authContainer.style.display = 'block';
+        content.style.display = 'none';
+    }
+});
+
+// Define hideOrderReadyOverlay globally
+window.hideOrderReadyOverlay = function() {
+    const orderReadyOverlay = document.getElementById('order-ready-overlay');
+    const videoContainer = document.getElementById('video-container');
+    orderReadyOverlay.style.display = 'none';
+    videoContainer.classList.remove('blur');
+};
+
 });
 
 // Check User Role
