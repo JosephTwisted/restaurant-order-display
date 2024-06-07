@@ -1,7 +1,4 @@
-import { initializeApp } from "./node_modules/firebase/app";
-import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, updateDoc, deleteDoc, getDocs, where, doc } from "./node_modules/firebase/firestore";
-
-// Your web app's Firebase configuration
+// Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyCimFXgJYIXZgKIV4kzWQihtspXTa7sF-Q",
     authDomain: "hickoryonlineorder.firebaseapp.com",
@@ -14,8 +11,8 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
 // Define hideOrderReadyOverlay globally
 window.hideOrderReadyOverlay = function() {
@@ -33,8 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const videoContainer = document.getElementById('video-container');
 
     function fetchOrders() {
-        const q = query(collection(db, "orders"), orderBy("number"));
-        onSnapshot(q, (querySnapshot) => {
+        db.collection("orders").orderBy("number").onSnapshot((querySnapshot) => {
             const orders = [];
             querySnapshot.forEach((doc) => {
                 orders.push(doc.data());
@@ -69,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function addOrder(timeLeft) {
         try {
             const orderNumber = Date.now();
-            await addDoc(collection(db, "orders"), {
+            await db.collection("orders").add({
                 number: orderNumber,
                 timeLeft: timeLeft,
                 status: 'Being Prepared'
@@ -81,8 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     addOrderBtn.addEventListener('click', async () => {
         const ordersInProgress = [];
-        const q = query(collection(db, "orders"), where("status", "==", "Being Prepared"));
-        const querySnapshot = await getDocs(q);
+        const querySnapshot = await db.collection("orders").where("status", "==", "Being Prepared").get();
         querySnapshot.forEach((doc) => {
             ordersInProgress.push(doc.data());
         });
@@ -105,11 +100,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     async function completeOrder(orderNumber) {
-        const q = query(collection(db, "orders"), where("number", "==", orderNumber));
-        const querySnapshot = await getDocs(q);
+        const querySnapshot = await db.collection("orders").where("number", "==", orderNumber).get();
         querySnapshot.forEach((document) => {
-            const orderDoc = doc(db, "orders", document.id);
-            updateDoc(orderDoc, { status: 'Ready for Pickup' });
+            db.collection("orders").doc(document.id).update({ status: 'Ready for Pickup' });
             showOrderReady(orderNumber);
         });
     }
@@ -123,11 +116,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function removeOrder(orderNumber) {
-        const q = query(collection(db, "orders"), where("number", "==", orderNumber));
-        const querySnapshot = await getDocs(q);
+        const querySnapshot = await db.collection("orders").where("number", "==", orderNumber).get();
         querySnapshot.forEach((document) => {
-            const orderDoc = doc(db, "orders", document.id);
-            deleteDoc(orderDoc);
+            db.collection("orders").doc(document.id).delete();
         });
     }
 
