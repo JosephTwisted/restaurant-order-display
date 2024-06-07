@@ -1,3 +1,17 @@
+// Firebase configuration
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
 document.addEventListener('DOMContentLoaded', () => {
     const ordersList = document.getElementById('orders-list');
     const addOrderBtn = document.getElementById('add-order-btn');
@@ -5,53 +19,46 @@ document.addEventListener('DOMContentLoaded', () => {
     const orderReadyContent = document.getElementById('order-ready-content');
     const videoContainer = document.getElementById('video-container');
 
-    let orderNumber = 1;
-    const ordersInProgress = [];
-    const completedOrders = [];
+    function fetchOrders() {
+        db.collection("orders").orderBy("number").onSnapshot((querySnapshot) => {
+            const orders = [];
+            querySnapshot.forEach((doc) => {
+                orders.push(doc.data());
+            });
+            renderOrders(orders);
+        });
+    }
 
-    function renderOrders() {
+    function renderOrders(orders) {
         ordersList.innerHTML = '';
 
-        // Append completed orders first
-        completedOrders.forEach(order => {
+        // Append orders
+        orders.forEach(order => {
             const li = document.createElement('li');
             li.innerHTML = `
                 <div class="order-number">#${String(order.number).padStart(3, '0')}</div>
-                <div class="order-time">Ready</div>
-                <div class="order-status">For Pickup</div>
+                <div class="order-time">${order.status === 'Being Prepared' ? order.timeLeft + ' min' : 'Ready'}</div>
+                <div class="order-status">${order.status}</div>
             `;
-            li.className = 'finished';
-            li.addEventListener('click', () => removeOrder(order.number));
+            li.className = order.status === 'Being Prepared' ? 'preparing' : 'finished';
+            li.addEventListener('click', () => {
+                if (order.status === 'Being Prepared') {
+                    completeOrder(order.number);
+                } else {
+                    removeOrder(order.number);
+                }
+            });
             ordersList.appendChild(li);
         });
-
-        // Append in-progress orders
-        ordersInProgress.forEach(order => {
-            const li = document.createElement('li');
-            li.innerHTML = `
-                <div class="order-number">#${String(order.number).padStart(3, '0')}</div>
-                <div class="order-time">${order.timeLeft} min</div>
-                <div class="order-status">Being Prepared</div>
-            `;
-            li.className = 'preparing';
-            li.addEventListener('click', () => completeOrder(order.number));
-            ordersList.appendChild(li);
-        });
-
-        // Scroll to the first order
-        ordersList.scrollTo(0, 0);
     }
 
-    function updateOrderTimes() {
-        ordersInProgress.forEach(order => {
-            if (order.timeLeft > 0) {
-                order.timeLeft -= 1;
-            }
+    function addOrder(timeLeft) {
+        db.collection("orders").add({
+            number: Date.now(),
+            timeLeft: timeLeft,
+            status: 'Being Prepared'
         });
-        renderOrders();
     }
-
-    setInterval(updateOrderTimes, 60000);
 
     addOrderBtn.addEventListener('click', () => {
         let lastOrderTime = 0;
@@ -68,18 +75,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
         }
-        ordersInProgress.push({ number: orderNumber++, timeLeft });
-        renderOrders();
+        addOrder(timeLeft);
     });
 
     function completeOrder(orderNumber) {
-        const orderIndex = ordersInProgress.findIndex(order => order.number === orderNumber);
-        if (orderIndex !== -1) {
-            const [order] = ordersInProgress.splice(orderIndex, 1);
-            completedOrders.unshift(order);
-            showOrderReady(order.number);
-            renderOrders();
-        }
+        db.collection("orders").where("number", "==", orderNumber).get()
+            .then(querySnapshot => {
+                querySnapshot.forEach(doc => {
+                    doc.ref.update({ status: 'Ready for Pickup' });
+                });
+            });
     }
 
     function showOrderReady(orderNumber) {
@@ -96,11 +101,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function removeOrder(orderNumber) {
-        const orderIndex = completedOrders.findIndex(order => order.number === orderNumber);
-        if (orderIndex !== -1) {
-            completedOrders.splice(orderIndex, 1);
-            renderOrders();
-        }
+        db.collection("orders").where("number", "==", orderNumber).get()
+            .then(querySnapshot => {
+                querySnapshot.forEach(doc => {
+                    doc.ref.delete();
+                });
+            });
     }
 
     document.addEventListener('keydown', (event) => {
@@ -111,5 +117,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
     orderReadyOverlay.addEventListener('click', hideOrderReadyOverlay);
 
-    renderOrders();
+    fetchOrders();
 });
