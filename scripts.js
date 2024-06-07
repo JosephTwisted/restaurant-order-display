@@ -53,8 +53,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function addOrder(timeLeft) {
+        const orderNumber = Date.now();
         db.collection("orders").add({
-            number: Date.now(),
+            number: orderNumber,
             timeLeft: timeLeft,
             status: 'Being Prepared'
         });
