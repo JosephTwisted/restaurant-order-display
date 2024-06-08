@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const orderReadyOverlay = document.getElementById('order-ready-overlay');
     const orderReadyContent = document.getElementById('order-ready-content');
     const videoContainer = document.getElementById('video-container');
+    const lastOrderNumberDisplay = document.getElementById('last-order-number');
 
     let orderNumber = 1;
     let ordersInProgress = [];
@@ -51,6 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
             li.addEventListener('click', () => completeOrder(order.number));
             ordersList.appendChild(li);
         });
+
+        // Update the last order number display
+        lastOrderNumberDisplay.textContent = orderNumber - 1;
 
         // Scroll to the first order
         ordersList.scrollTo(0, 0);
