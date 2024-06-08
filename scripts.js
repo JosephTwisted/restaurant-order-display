@@ -6,8 +6,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const videoContainer = document.getElementById('video-container');
 
     let orderNumber = 1;
-    const ordersInProgress = [];
-    const completedOrders = [];
+    let ordersInProgress = [];
+    let completedOrders = [];
+
+    if (localStorage.getItem('ordersInProgress')) {
+        ordersInProgress = JSON.parse(localStorage.getItem('ordersInProgress'));
+    }
+    if (localStorage.getItem('completedOrders')) {
+        completedOrders = JSON.parse(localStorage.getItem('completedOrders'));
+    }
+
+    function saveOrders() {
+        localStorage.setItem('ordersInProgress', JSON.stringify(ordersInProgress));
+        localStorage.setItem('completedOrders', JSON.stringify(completedOrders));
+    }
 
     function renderOrders() {
         ordersList.innerHTML = '';
@@ -19,9 +31,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="order-number">#${String(order.number).padStart(3, '0')}</div>
                 <div class="order-time">Ready</div>
                 <div class="order-status">For Pickup</div>
+                <button class="edit-order-btn" onclick="editOrder(${order.number})">Edit</button>
+                <button class="remove-order-btn" onclick="removeOrder(${order.number})">Remove</button>
             `;
             li.className = 'finished';
-            li.addEventListener('click', () => removeOrder(order.number));
             ordersList.appendChild(li);
         });
 
@@ -32,9 +45,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="order-number">#${String(order.number).padStart(3, '0')}</div>
                 <div class="order-time">${order.timeLeft} min</div>
                 <div class="order-status">Being Prepared</div>
+                <button class="edit-order-btn" onclick="editOrder(${order.number})">Edit</button>
+                <button class="complete-order-btn" onclick="completeOrder(${order.number})">Complete</button>
             `;
             li.className = 'preparing';
-            li.addEventListener('click', () => completeOrder(order.number));
             ordersList.appendChild(li);
         });
 
@@ -49,6 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         renderOrders();
+        saveOrders();
     }
 
     setInterval(updateOrderTimes, 60000);
@@ -70,19 +85,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         ordersInProgress.push({ number: orderNumber++, timeLeft });
         renderOrders();
+        saveOrders();
     });
 
-    function completeOrder(orderNumber) {
+    window.completeOrder = function (orderNumber) {
         const orderIndex = ordersInProgress.findIndex(order => order.number === orderNumber);
         if (orderIndex !== -1) {
             const [order] = ordersInProgress.splice(orderIndex, 1);
             completedOrders.unshift(order);
             showOrderReady(order.number);
             renderOrders();
+            saveOrders();
         }
     }
 
-    function showOrderReady(orderNumber) {
+    window.showOrderReady = function (orderNumber) {
         const audio = new Audio('order-ready.mp3');
         audio.play();
         videoContainer.classList.add('blur');
@@ -90,16 +107,35 @@ document.addEventListener('DOMContentLoaded', () => {
         orderReadyOverlay.style.display = 'flex';
     }
 
-    function hideOrderReadyOverlay() {
+    window.hideOrderReadyOverlay = function () {
         orderReadyOverlay.style.display = 'none';
         videoContainer.classList.remove('blur');
     }
 
-    function removeOrder(orderNumber) {
+    window.removeOrder = function (orderNumber) {
         const orderIndex = completedOrders.findIndex(order => order.number === orderNumber);
         if (orderIndex !== -1) {
             completedOrders.splice(orderIndex, 1);
             renderOrders();
+            saveOrders();
+        }
+    }
+
+    window.editOrder = function (orderNumber) {
+        const order = ordersInProgress.find(order => order.number === orderNumber) ||
+            completedOrders.find(order => order.number === orderNumber);
+        if (order) {
+            const newTime = prompt('Enter new time in minutes:', order.timeLeft);
+            if (newTime !== null) {
+                const parsedTime = parseInt(newTime);
+                if (!isNaN(parsedTime)) {
+                    order.timeLeft = parsedTime;
+                    renderOrders();
+                    saveOrders();
+                } else {
+                    alert('Invalid time entered.');
+                }
+            }
         }
     }
 
