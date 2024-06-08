@@ -188,7 +188,7 @@ button:hover {
 }
 
 .edit-order-btn::before {
-    content: '\270E'; /* Unicode for pencil icon */
+    content: '✏️'; /* Unicode for pencil icon */
 }
 
 .edit-order-btn:hover {
