@@ -100,6 +100,7 @@ body {
     align-items: center;
     justify-content: center;
     font-size: 1.5em;
+    position: relative;
 }
 
 .order-list li:hover {
@@ -165,11 +166,27 @@ button:hover {
 
 #order-ready-content {
     font-family: 'Posey', sans-serif;
-    background: ##00FF00;
+    background: #00FF00;
     padding: 50px;
     border-radius: 10px;
 }
 
 .blur {
     filter: blur(5px);
+}
+
+.edit-order-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.edit-order-btn:hover {
+    color: #e59400;
 }
