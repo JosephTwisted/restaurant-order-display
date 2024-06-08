@@ -31,10 +31,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="order-number">#${String(order.number).padStart(3, '0')}</div>
                 <div class="order-time">Ready</div>
                 <div class="order-status">For Pickup</div>
-                <button class="edit-order-btn" onclick="editOrder(${order.number})">Edit</button>
-                <button class="remove-order-btn" onclick="removeOrder(${order.number})">Remove</button>
+                <button class="edit-order-btn" onclick="editOrder(${order.number})">✏️</button>
             `;
             li.className = 'finished';
+            li.addEventListener('click', () => removeOrder(order.number));
             ordersList.appendChild(li);
         });
 
@@ -45,10 +45,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="order-number">#${String(order.number).padStart(3, '0')}</div>
                 <div class="order-time">${order.timeLeft} min</div>
                 <div class="order-status">Being Prepared</div>
-                <button class="edit-order-btn" onclick="editOrder(${order.number})">Edit</button>
-                <button class="complete-order-btn" onclick="completeOrder(${order.number})">Complete</button>
+                <button class="edit-order-btn" onclick="editOrder(${order.number})">✏️</button>
             `;
             li.className = 'preparing';
+            li.addEventListener('click', () => completeOrder(order.number));
             ordersList.appendChild(li);
         });
 
@@ -121,7 +121,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    window.editOrder = function (orderNumber) {
+    window.editOrder = function (orderNumber, event) {
+        event.stopPropagation();  // Prevent triggering complete or remove on edit click
         const order = ordersInProgress.find(order => order.number === orderNumber) ||
             completedOrders.find(order => order.number === orderNumber);
         if (order) {
