@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="order-number">#${String(order.number).padStart(3, '0')}</div>
                 <div class="order-time">Ready</div>
                 <div class="order-status">For Pickup</div>
-                <button class="edit-order-btn" onclick="editOrder(${order.number}, event)">✏️</button>
+                <button class="edit-order-btn" onclick="editOrder(${order.number}, event)"></button>
             `;
             li.className = 'finished';
             li.addEventListener('click', () => removeOrder(order.number));
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="order-number">#${String(order.number).padStart(3, '0')}</div>
                 <div class="order-time">${order.timeLeft} min</div>
                 <div class="order-status">Being Prepared</div>
-                <button class="edit-order-btn" onclick="editOrder(${order.number}, event)">✏️</button>
+                <button class="edit-order-btn" onclick="editOrder(${order.number}, event)"></button>
             `;
             li.className = 'preparing';
             li.addEventListener('click', () => completeOrder(order.number));
