@@ -187,6 +187,10 @@ button:hover {
     transition: color 0.3s;
 }
 
+.edit-order-btn::before {
+    content: '\270E'; /* Unicode for pencil icon */
+}
+
 .edit-order-btn:hover {
     color: #e59400;
 }
