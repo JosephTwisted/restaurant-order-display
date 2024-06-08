@@ -137,9 +137,14 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (newTime === '') {
                 if (confirm('Are you sure you want to cancel this order?')) {
                     if (ordersInProgress.includes(order)) {
-                        ordersInProgress = ordersInProgress.filter(o => o.number !== orderNumber);
+                        ordersInProgress = ordersInProgress.filter(o => o.number !== order.number);
                     } else {
-                        completedOrders = completedOrders.filter(o => o.number !== orderNumber);
+                        completedOrders = completedOrders.filter(o => o.number !== order.number);
+                    }
+
+                    // Update the order number only if this was the last order
+                    if (order.number === orderNumber - 1) {
+                        orderNumber--;
                     }
                 }
             }
