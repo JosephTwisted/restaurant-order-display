@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="order-number">#${String(order.number).padStart(3, '0')}</div>
                 <div class="order-time">Ready</div>
                 <div class="order-status">For Pickup</div>
-                <button class="edit-order-btn" onclick="editOrder(${order.number})">✏️</button>
+                <button class="edit-order-btn" onclick="editOrder(${order.number}, event)">✏️</button>
             `;
             li.className = 'finished';
             li.addEventListener('click', () => removeOrder(order.number));
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="order-number">#${String(order.number).padStart(3, '0')}</div>
                 <div class="order-time">${order.timeLeft} min</div>
                 <div class="order-status">Being Prepared</div>
-                <button class="edit-order-btn" onclick="editOrder(${order.number})">✏️</button>
+                <button class="edit-order-btn" onclick="editOrder(${order.number}, event)">✏️</button>
             `;
             li.className = 'preparing';
             li.addEventListener('click', () => completeOrder(order.number));
@@ -126,17 +126,25 @@ document.addEventListener('DOMContentLoaded', () => {
         const order = ordersInProgress.find(order => order.number === orderNumber) ||
             completedOrders.find(order => order.number === orderNumber);
         if (order) {
-            const newTime = prompt('Enter new time in minutes:', order.timeLeft);
-            if (newTime !== null) {
+            const newTime = prompt('Enter new time in minutes (leave empty to cancel):', order.timeLeft);
+            if (newTime !== null && newTime !== '') {
                 const parsedTime = parseInt(newTime);
                 if (!isNaN(parsedTime)) {
                     order.timeLeft = parsedTime;
-                    renderOrders();
-                    saveOrders();
                 } else {
                     alert('Invalid time entered.');
                 }
+            } else if (newTime === '') {
+                if (confirm('Are you sure you want to cancel this order?')) {
+                    if (ordersInProgress.includes(order)) {
+                        ordersInProgress = ordersInProgress.filter(o => o.number !== orderNumber);
+                    } else {
+                        completedOrders = completedOrders.filter(o => o.number !== orderNumber);
+                    }
+                }
             }
+            renderOrders();
+            saveOrders();
         }
     }
 
