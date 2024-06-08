@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setInterval(updateOrderTimes, 60000);
 
-    addOrderBtn.addEventListener('click', () => {
+    function addOrder() {
         let lastOrderTime = 0;
         if (ordersInProgress.length > 0) {
             lastOrderTime = Math.max(...ordersInProgress.map(order => order.timeLeft));
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ordersInProgress.push({ number: orderNumber++, timeLeft });
         renderOrders();
         saveOrders();
-    });
+    }
 
     window.completeOrder = function (orderNumber) {
         const orderIndex = ordersInProgress.findIndex(order => order.number === orderNumber);
@@ -142,6 +142,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
             hideOrderReadyOverlay();
+        } else if (event.key === 'Enter') {
+            addOrder();
         }
     });
 
